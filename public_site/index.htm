@@ -1,0 +1,427 @@
+<html>
+    <head>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+    </head>
+    <style>
+        .rectangle { fill: olivedrab; }
+        text {font-size: 1.4em; }
+
+        body{
+            padding-left: 10%;
+            padding-right: 10%;
+            padding-bottom: 10%;
+        }
+
+        text{
+            font-family: sans-serif;
+        }
+
+        #first{
+            padding-top: 5%;
+        }
+
+        h2{
+            font-family: sans-serif;
+            text-align: center;
+        }
+
+        h3{
+            font-family: sans-serif;
+            margin-top: 7%;
+        }
+
+        .main{
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            outline: 3px double black;
+        }
+
+        .second{
+           
+        }
+    
+    </style>
+    <body>
+        <h2 id="first">Number of Trees at Each Site</h2>
+        <div class="main">
+            <svg width="1200" height="800" id ="g1"></svg>
+            <script>  
+                treeSite = [{'site':'Unspecified Cutout','count':2}, {'site':'Unspecified Yard','count':41},{'site':'Back Yard : Cutout','count':5},{'site':'Back Yard : Yard','count':81},{'site':'Front Yard : Cutout','count':29},{'site':'Front Yard : Pot','count':2},{'site':'Front Yard : Yard','count':600},
+                            {'site':'Unspecified Median','count':6},{'site':'Median : Cutout','count':1081},{'site':'Median : Yard','count':366},{'site':'Side Yard : Cutout','count':5},{'site':'Side Yard : Yard','count':217},{'site':'Sidewalk: Curb side','count':4},{'site':'Sidewalk: Curb side : Cutout','count':29158},
+                            {'site':'Sidewalk: Curb side : Hanging Pot','count':1},{'site':'Sidewalk: Curb side : Pot','count':432},{'site':'Sidewalk: Curb side : Yard','count':2166},{'site':'Sidewalk: Property side : Cutout','count':133},{'site':'Sidewalk: Property side : Pot','count':3},
+                            {'site':'Sidewalk: Property side : Yard','count':2699},{'site':'Unaccepted Street : Cutout','count':3},{'site':'Unaccepted Street : Yard','count':21},{'site':'Unspecified Yard','count':63}];                 
+                const svg_1 = d3.select("#g1");
+                
+                const width = svg_1.attr("width");
+                const height = svg_1.attr("height");
+                const margin = {top: 75, right: 10, bottom: 200, left: 100};
+                
+                const width_1 = width - margin.left - margin.right;
+                const height_1 = height - margin.top - margin.bottom;
+
+                var yScale = d3.scaleLog()
+                            .domain([1, d3.max(treeSite, function(d) 
+                                {return parseInt(d.count); })])
+                            .range([height_1, 1])
+                            .base(10);
+
+
+                var xScale = d3.scaleBand()
+                            .domain(treeSite.map(function(d) { return d.site; }))
+                            .range([0, width_1]).padding(0.1); 
+                
+                const graph_1 = svg_1.append('g')
+                            .attr('transform', `translate(${margin.left},${margin.top})`);
+
+
+        
+                graph_1.append("g")
+                .attr("transform", "translate(0," + height_1 + ")")
+                .call(d3.axisBottom(xScale))
+                .selectAll("text")
+                .style("text-anchor", "end")
+                .attr("dx", "-.8em")
+                .attr("dy", ".15em")
+                .attr("transform", "rotate(-45)");
+
+                graph_1.append("g")
+                .call(d3.axisLeft(yScale));        
+                    
+                graph_1.selectAll(".rectangle")
+                .data(treeSite)
+                .enter().append("rect")
+                .attr("class", "rectangle")
+                .attr("x", function(d) { return xScale(d.site); })
+                .attr("y", function(d) { return yScale(d.count); })
+                .attr("width", xScale.bandwidth())
+                .attr("height", function(d) { return height_1 - yScale(d.count); });
+            
+                graph_1.append("text")
+                .attr("transform", "translate(" + (width_1 / 2) + " ," + (height_1 + margin.bottom - 5) + ")")
+                .style("text-anchor", "middle")
+                .style("font-size", "20px")
+                .text("Site");
+
+                graph_1.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 0 - margin.left)
+                .attr("x", 0 - (height_1 / 2))
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .style("font-size", "20px")
+                .style("margin-top", "10px")
+                .text("Tree Count");        
+            </script> 
+        </div>
+        <h3>Top 10 Species at Sidewalk: Curbside: Cutout</h3>
+        <div class="second">
+            <svg width="600" height="400" id ="g2"></svg>
+            <script>
+                cutoutSpecies = [{'species':'London Plane','count':2411}, {'species':'New Zealand Xmas Tree','count':1644}, {'species':'Brisbane Box','count':1566},
+                {'species':'Victorian Box','count':1478}, {'species':'Swamp Myrtle','count':1438},{'species':'Indian Laurel Fig Tree','count':1260},{'species':'Southern Magnolia','count':1249},
+                {'species':'Cherry Plum','count':1063}, {'species':'Hybrid Strawberry Tree','count':935}, {'species':'Kwanzan Flowering Cherry','count':742}];
+                
+                const svg_2 = d3.select("#g2");
+
+
+                const width_svg2 = svg_2.attr("width");
+                const height_svg2 = svg_2.attr("height");
+
+                //const margin_svg2 = {top: 75, right: 10, bottom: 200, left: 100};
+                const width_1_2 = width_svg2 - margin.left - margin.right;
+                const height_1_2 = height_svg2 - margin.top - margin.bottom;
+
+                var yScale = d3.scaleLinear()
+                            .domain([0, d3.max(cutoutSpecies, function(d) {return parseInt(d.count); })])
+                            .range([height_1_2, 0]);
+
+
+                var xScale = d3.scaleBand()
+                            .domain(cutoutSpecies.map(function(d) { return d.species; }))
+                            .range([0, width_1_2]).padding(0.1); 
+
+                const graph_2 = svg_2.append('g')
+                            .attr('transform', `translate(${margin.left},${margin.top})`);
+                
+                
+                graph_2.append("g").attr("transform", "translate(0," + height_1_2 + ")")
+                .call(d3.axisBottom(xScale))
+                .selectAll("text")
+                .style("text-anchor", "end")
+                .attr("dx", "-.8em")
+                .attr("dy", ".15em")
+                .attr("transform", "rotate(-45)");
+
+                graph_2.append("g").call(d3.axisLeft(yScale).ticks(5));        
+                    
+                graph_2.selectAll(".rectangle")
+                .data(cutoutSpecies)
+                .enter().append("rect")
+                .attr("class", "rectangle")
+                .attr("x", function(d) { return xScale(d.species); })
+                .attr("y", function(d) { return yScale(d.count); })
+                .attr("width", xScale.bandwidth())
+                .attr("height", function(d) { return height_1_2 - yScale(d.count); });
+            
+                graph_2.append("text")
+                .attr("transform", "translate(" + (width_1_2 / 2) + " ," + (height_1_2 + margin.bottom - 10) + ")")
+                .style("text-anchor", "middle")
+                .style("font-size", "20px")
+                .text("Species");
+
+                graph_2.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 0 - margin.left)
+                .attr("x", 0 - (height_1_2 / 2))
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .style("font-size", "20px")
+                .style("margin-top", "10px")
+                .text("Species Count");  
+            </script>
+        </div>
+        <h3>Top 10 Species at Sidewalk: Property Side: Yard</h3>
+        <div class="second">
+            <svg width="600" height="400" id ="g3"></svg>
+            <script>
+                yardSpecies = [{'species':'Juniper','count':262},{'species':'Karo Tree','count':143},{'species':'Monterey Pine','count':132},{'species':'Monterey Cypress','count':123},{'species':'Blackwood Acacia','count':94},{'species':'Dracena Palm','count':68},{'species':'Victorian Box','count':61},{'species':' Irish Yew','count':59},
+                {'species':'Brush Cherry','count':54},{'species':'Lemon Bottlebrush','count':53}];
+
+                const svg_3 = d3.select("#g3");
+
+                var yScale = d3.scaleLinear()
+                            .domain([0, d3.max(yardSpecies, function(d) {return parseInt(d.count); })])
+                            .range([height_1_2, 0]);
+
+
+                var xScale = d3.scaleBand()
+                            .domain(yardSpecies.map(function(d) { return d.species; }))
+                            .range([0, width_1_2]).padding(0.1); 
+
+                const graph_3 = svg_3.append('g')
+                            .attr('transform', `translate(${margin.left},${margin.top})`);
+                
+                
+                graph_3.append("g").attr("transform", "translate(0," + height_1_2 + ")")
+                .call(d3.axisBottom(xScale))
+                .selectAll("text")
+                .style("text-anchor", "end")
+                .attr("dx", "-.8em")
+                .attr("dy", ".15em")
+                .attr("transform", "rotate(-45)");
+
+                graph_3.append("g")
+                .call(d3.axisLeft(yScale).ticks(5));       
+                    
+                graph_3.selectAll(".rectangle")
+                .data(yardSpecies)
+                .enter().append("rect")
+                .attr("class", "rectangle")
+                .attr("x", function(d) { return xScale(d.species); })
+                .attr("y", function(d) { return yScale(d.count); })
+                .attr("width", xScale.bandwidth())
+                .attr("height", function(d) { return height_1_2 - yScale(d.count); });
+            
+                graph_3.append("text")
+                .attr("transform", "translate(" + (width_1_2 / 2) + " ," + (height_1_2 + margin.bottom - 10) + ")")
+                .style("text-anchor", "middle")
+                .style("font-size", "20px")
+                .text("Species");
+
+                graph_3.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 0 - margin.left)
+                .attr("x", 0 - (height_1_2 / 2))
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .style("font-size", "20px")
+                .style("margin-top", "10px")
+                .text("Species Count");    
+            </script>
+        </div>
+        
+        <h3>Top 10 Species at Sidewalk: Curb Side: Yard</h3>
+        <div class="second">
+            <svg width="600" height="400" id ="g4"></svg>
+            <script>
+                yardSpecies_2 = [{'species':'New Zealand Xmas Tree','count':185},{'species':'Cherry Plum','count':135},{'species':'London Plane','count':120},{'species':'Blackwood Acacia','count':116},{'species':'Red Flowering Gum','count':74},{'species':'Victorian Box','count':66},{'species':'Dracena Palm','count':65},
+                                {'species':'Mayten','count':64},{'species':'Southern Magnolia','count':64},{'species':'Hybrid Strawberry Tree','count':64}];
+
+                const svg_4 = d3.select("#g4");
+
+                var yScale = d3.scaleLinear()
+                            .domain([0, d3.max(yardSpecies_2, function(d) {return parseInt(d.count); })])
+                            .range([height_1_2, 0]);
+
+
+                var xScale = d3.scaleBand()
+                            .domain(yardSpecies_2.map(function(d) { return d.species; }))
+                            .range([0, width_1_2]).padding(0.1); 
+
+                const graph_4 = svg_4.append('g')
+                            .attr('transform', `translate(${margin.left},${margin.top})`);
+                
+                
+                graph_4.append("g").attr("transform", "translate(0," + height_1_2 + ")")
+                .call(d3.axisBottom(xScale))
+                .selectAll("text")
+                .style("text-anchor", "end")
+                .attr("dx", "-.8em")
+                .attr("dy", ".15em")
+                .attr("transform", "rotate(-45)");
+
+                graph_4.append("g")
+                .call(d3.axisLeft(yScale).ticks(5));       
+                    
+                graph_4.selectAll(".rectangle")
+                .data(yardSpecies_2)
+                .enter().append("rect")
+                .attr("class", "rectangle")
+                .attr("x", function(d) { return xScale(d.species); })
+                .attr("y", function(d) { return yScale(d.count); })
+                .attr("width", xScale.bandwidth())
+                .attr("height", function(d) { return height_1_2 - yScale(d.count); });
+            
+                graph_4.append("text")
+                .attr("transform", "translate(" + (width_1_2 / 2) + " ," + (height_1_2 + margin.bottom - 10) + ")")
+                .style("text-anchor", "middle")
+                .style("font-size", "20px")
+                .text("Species");
+
+                graph_4.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 0 - margin.left)
+                .attr("x", 0 - (height_1_2 / 2))
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .style("font-size", "20px")
+                .style("margin-top", "10px")
+                .text("Species Count");          
+            </script>
+        </div>
+        
+        <h3>Top 10 Species at Median: Cutout</h3>
+        <div class="second">
+            <svg width="600" height="400" id ="g5"></svg>
+            <script>
+                medianSpecies = [{'species':'Canary Island Date Palm','count':113},{'species':'Shoestring Acacia','count':69},{'species':'Brisbane Box','count':61},{'species':'Red Flowering Gum','count':61},{'species':'Monterey Pine','count':59},
+                {'species':'Lemon Bottlebrush','count':57},{'species':'Swamp Myrtle','count':55},{'species':'Mexican Fan Palm','count':33},{'species':'New Zealand Xmas Tree','count':33},{'species':'Monterey Cypress','count':30}];
+
+                const svg_5 = d3.select("#g5");
+
+                var yScale = d3.scaleLinear()
+                            .domain([0, d3.max(medianSpecies, function(d) {return parseInt(d.count); })])
+                            .range([height_1_2, 0]);
+
+
+                var xScale = d3.scaleBand()
+                            .domain(medianSpecies.map(function(d) { return d.species; }))
+                            .range([0, width_1_2]).padding(0.1); 
+
+                const graph_5 = svg_5.append('g')
+                            .attr('transform', `translate(${margin.left},${margin.top})`);
+                
+                
+                graph_5.append("g").attr("transform", "translate(0," + height_1_2 + ")")
+                .call(d3.axisBottom(xScale))
+                .selectAll("text")
+                .style("text-anchor", "end")
+                .attr("dx", "-.8em")
+                .attr("dy", ".15em")
+                .attr("transform", "rotate(-45)");
+
+                graph_5.append("g")
+                .call(d3.axisLeft(yScale).ticks(5));         
+                    
+                graph_5.selectAll(".rectangle")
+                .data(medianSpecies)
+                .enter().append("rect")
+                .attr("class", "rectangle")
+                .attr("x", function(d) { return xScale(d.species); })
+                .attr("y", function(d) { return yScale(d.count); })
+                .attr("width", xScale.bandwidth())
+                .attr("height", function(d) { return height_1_2 - yScale(d.count); });
+            
+                graph_5.append("text")
+                .attr("transform", "translate(" + (width_1_2 / 2) + " ," + (height_1_2 + margin.bottom - 10) + ")")
+                .style("text-anchor", "middle")
+                .style("font-size", "20px")
+                .text("Species");
+
+                graph_5.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 0 - margin.left)
+                .attr("x", 0 - (height_1_2 / 2))
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .style("font-size", "20px")
+                .style("margin-top", "10px")
+                .text("Species Count");
+            </script>
+        </div>
+
+        <h3>Top 10 Species at Front Yard: Yard</h3>
+        <div class="second">
+            <svg width="600" height="400" id ="g6"></svg>
+            <script>
+                yardSpecies_3 = [
+                {'species':'Blackwood Acacia','count':44},{'species':'Monterey Pine','count':43},{'species':'Monterey Cypress','count':29},{'species':'Cherry Plum','count':26},{'species':'Blue Gum','count':22},{'species':'Olive Tree','count':16},
+                {'species':'Red Flowering Gum','count':16},{'species':'Coast Redwood','count':14},{'species':'Coast Live Oak','count':14},{'species':'River Red Gum','count':12}];
+
+                const svg_6 = d3.select("#g6");
+
+                var yScale = d3.scaleLinear()
+                            .domain([0, d3.max(yardSpecies_3, function(d) {return parseInt(d.count); })])
+                            .range([height_1_2, 0]);
+
+
+                var xScale = d3.scaleBand()
+                            .domain(yardSpecies_3.map(function(d) { return d.species; }))
+                            .range([0, width_1_2]).padding(0.1); 
+
+                const graph_6 = svg_6.append('g')
+                            .attr('transform', `translate(${margin.left},${margin.top})`);
+                
+                
+                graph_6.append("g").attr("transform", "translate(0," + height_1_2 + ")")
+                .call(d3.axisBottom(xScale))
+                .selectAll("text")
+                .style("text-anchor", "end")
+                .attr("dx", "-.8em")
+                .attr("dy", ".15em")
+                .attr("transform", "rotate(-45)");
+
+                graph_6.append("g")
+                .call(d3.axisLeft(yScale).ticks(5));         
+                    
+                graph_6.selectAll(".rectangle")
+                .data(yardSpecies_3)
+                .enter().append("rect")
+                .attr("class", "rectangle")
+                .attr("x", function(d) { return xScale(d.species); })
+                .attr("y", function(d) { return yScale(d.count); })
+                .attr("width", xScale.bandwidth())
+                .attr("height", function(d) { return height_1_2 - yScale(d.count); });
+            
+                graph_6.append("text")
+                .attr("transform", "translate(" + (width_1_2 / 2) + " ," + (height_1_2 + margin.bottom - 10) + ")")
+                .style("text-anchor", "middle")
+                .style("font-size", "20px")
+                .text("Species");
+
+                graph_6.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 0 - margin.left)
+                .attr("x", 0 - (height_1_2 / 2))
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .style("font-size", "20px")
+                .style("margin-top", "10px")
+                .text("Species Count");      
+            </script>
+        </div>
+
+    </body>
+
+</html>
